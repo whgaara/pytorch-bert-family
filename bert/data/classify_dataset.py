@@ -1,4 +1,4 @@
-from classify_config import *
+from tasks.classify.classify_config import *
 from torch.utils.data import Dataset
 from bert.common.tokenizers import Tokenizer
 

@@ -1,7 +1,7 @@
 import math
 import torch.nn as nn
 
-from classify_config import *
+from tasks.classify.classify_config import *
 
 
 class MultiHeadSelfAttention(nn.Module):

@@ -1,3 +1,4 @@
+import os
 import time
 import torch
 import pickle
@@ -25,15 +26,16 @@ AttentionHeadNum = 12
 # ## 训练调试参数结束 ## #
 
 # ## 模型文件路径 ## #
-UserDict = 'data/key.txt'
-StopDict = 'data/stop.txt'
-VocabPath = 'data/vocab.txt'
-SourcePath = 'data/classify/source_data.txt'
-TrainPath = 'data/classify/train_data.txt'
-EvalPath = 'data/classify/eval_data.txt'
-C2NPicklePath = 'data/classify/classes2num.pickle'
-FinetunePath = 'checkpoint/finetune/bert_cls_%s_%s.model' % (SentenceLength, HiddenLayerNum)
-PretrainPath = 'checkpoint/pretrain/pytorch_model.bin'
+root = '/'.join(os.getcwd().split('/')[:-2])
+UserDict = os.path.join(root, 'data/key.txt')
+StopDict = os.path.join(root, 'data/stop.txt')
+VocabPath = os.path.join(root, 'data/vocab.txt')
+SourcePath = os.path.join(root, 'data/classify/source_data.txt')
+TrainPath = os.path.join(root, 'data/classify/train_data.txt')
+EvalPath = os.path.join(root, 'data/classify/eval_data.txt')
+C2NPicklePath = os.path.join(root, 'data/classify/classes2num.pickle')
+FinetunePath = os.path.join(root, 'checkpoint/finetune/bert_cls_%s_%s.model' % (SentenceLength, HiddenLayerNum))
+PretrainPath = os.path.join(root, 'checkpoint/pretrain/pytorch_model.bin')
 
 try:
     VocabSize = len(open(VocabPath, 'r', encoding='utf-8').readlines())

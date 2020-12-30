@@ -6,8 +6,8 @@ import torch.nn as nn
 from tqdm import tqdm
 from torch.optim import Adam
 from sklearn.metrics import f1_score
-from torch.utils.data import DataLoader
-from bert.data.classify_dataset import *
+from bert.data.classify_dataset import BertClsDataSet
+from tasks.classify.classify_config import *
 from bert.models.tasks.BertClassify import BertClassify
 
 
@@ -17,9 +17,10 @@ def get_f1(l_t, l_p):
 
 
 if __name__ == '__main__':
+    # root = '/'.join(os.getcwd().split('/')[:-2])
+
     best_eval_f1 = 0
     dataset = BertClsDataSet(TrainPath, VocabPath, C2NPicklePath)
-    # dataloader = DataLoader(dataset=dataset, batch_size=BatchSize, shuffle=True, drop_last=False)
 
     # 加载类别映射表
     with open(C2NPicklePath, 'rb') as f:
@@ -86,7 +87,7 @@ if __name__ == '__main__':
         bert_classify.to(device)
         print('EP:%d Model Saved on:%s' % (epoch, output_path))
 
-        # # test
+        # eval
         # with torch.no_grad():
         #     bert_classify.eval()
         #     accuracy = 0

@@ -1,7 +1,4 @@
-import random
-import pickle
-
-from classify_config import *
+from tasks.classify.classify_config import *
 from bert.common.tokenizers import Tokenizer
 
 
