@@ -1,5 +1,11 @@
+# coding: utf-8
+
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+
+# linux环境使用
+# import sys
+# sys.path.append('根目录')
 
 import torch.nn as nn
 

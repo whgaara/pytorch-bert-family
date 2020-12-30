@@ -1,3 +1,9 @@
+# coding: utf-8
+
+# linux环境使用
+# import sys
+# sys.path.append('根目录')
+
 from classify_config import *
 
 

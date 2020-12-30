@@ -1,6 +1,11 @@
 # coding: utf-8
+
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+
+# linux环境使用
+# import sys
+# sys.path.append('根目录')
 
 from tqdm import tqdm
 from tasks.classify.classify_config import *
@@ -48,4 +53,13 @@ class Inference(object):
 
 if __name__ == '__main__':
     bert_infer = Inference(FinetunePath)
-    bert_infer.inference_single('血压很高')
+    print('\n请你输入疾病信息：')
+    while True:
+        data = input()
+        if data == 'exit':
+            break
+        if not data:
+            print('您输入的内容为空，请重新输入！\n')
+        if data:
+            label, prob = bert_infer.inference_single(data)
+            print('疾病类型：%s，置信度：%s。\n' % (label, prob))

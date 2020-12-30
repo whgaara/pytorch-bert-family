@@ -65,7 +65,7 @@ class BertClsDataSet(Dataset):
         instance['batch_labels'] = batch_labels
         instance['batch_segments'] = batch_segments
         instance['batch_positions'] = batch_positions
-        instance = {k: torch.tensor(v, dtype=torch.long) for k, v in instance.items()}
+        instance = {k: torch.tensor(v, dtype=torch.long).to(device) for k, v in instance.items()}
         return instance
 
 
@@ -106,7 +106,7 @@ class BertClsEvalSet(Dataset):
         instance['eval_label'] = label
         instance['eval_segment'] = segment
         instance['eval_position'] = position
-        instance = {k: torch.tensor(v, dtype=torch.long) for k, v in instance.items()}
+        instance = {k: torch.tensor(v, dtype=torch.long).to(device) for k, v in instance.items()}
         return instance
 
 
