@@ -78,13 +78,7 @@ if __name__ == '__main__':
 
         print('EP_%d mask loss:%s' % (epoch, print_loss))
         cls_f1 = get_f1(gt_list, pre_list)
-        print(epoch, 'classify f1 is:%s' % cls_f1)
-
-        # save
-        # output_path = FinetunePath + '.ep%d' % epoch
-        # torch.save(bert_classify.cpu(), output_path)
-        # bert_classify.to(device)
-        # print('EP:%d Model Saved on:%s' % (epoch, output_path))
+        print(epoch, 'train-classify f1 is:%s' % cls_f1)
 
         # eval
         with torch.no_grad():
@@ -114,6 +108,7 @@ if __name__ == '__main__':
             print('验证集正确率：%s' % acc_rate)
 
             eval_f1 = get_f1(label_list, pred_list)
+            print(epoch, 'eval-classify f1 is:%s' % eval_f1)
 
             # save
             if eval_f1 > best_eval_f1:
@@ -121,4 +116,5 @@ if __name__ == '__main__':
                 torch.save(bert_classify.cpu(), FinetunePath)
                 bert_classify.to(device)
                 print('EP:%d Model Saved on:%s' % (epoch, FinetunePath))
-            print(epoch, 'oce eval f1 is:%s\n' % eval_f1)
+
+            print('\n')
