@@ -6,7 +6,7 @@ import torch.nn as nn
 from tqdm import tqdm
 from torch.optim import Adam
 from sklearn.metrics import f1_score
-from bert.data.classify_dataset import BertClsDataSet
+from bert.data.classify_dataset import BertClsDataSet, BertClsEvalSet
 from tasks.classify.classify_config import *
 from bert.models.tasks.BertClassify import BertClassify
 
@@ -17,10 +17,9 @@ def get_f1(l_t, l_p):
 
 
 if __name__ == '__main__':
-    # root = '/'.join(os.getcwd().split('/')[:-2])
-
     best_eval_f1 = 0
     dataset = BertClsDataSet(TrainPath, VocabPath, C2NPicklePath)
+    evalset = BertClsEvalSet(EvalPath, VocabPath, C2NPicklePath)
 
     # 加载类别映射表
     with open(C2NPicklePath, 'rb') as f:
@@ -82,58 +81,44 @@ if __name__ == '__main__':
         print(epoch, 'classify f1 is:%s' % cls_f1)
 
         # save
-        output_path = FinetunePath + '.ep%d' % epoch
-        torch.save(bert_classify.cpu(), output_path)
-        bert_classify.to(device)
-        print('EP:%d Model Saved on:%s' % (epoch, output_path))
+        # output_path = FinetunePath + '.ep%d' % epoch
+        # torch.save(bert_classify.cpu(), output_path)
+        # bert_classify.to(device)
+        # print('EP:%d Model Saved on:%s' % (epoch, output_path))
 
         # eval
-        # with torch.no_grad():
-        #     bert_classify.eval()
-        #     accuracy = 0
-        #     recall = 0
-        #     entities_count = 0
-        #
-        #     for test_data in testset:
-        #         label2class = []
-        #         output2class = []
-        #
-        #         input_token = test_data['input_tokens_id'].unsqueeze(0).to(device)
-        #         segment_ids = test_data['segment_ids'].unsqueeze(0).to(device)
-        #         input_token_list = input_token.tolist()
-        #         input_len = len([x for x in input_token_list[0] if x])
-        #         label_list = test_data['input_tokens_class_id'].tolist()[:input_len]
-        #         batch_output = bert_classify(input_token, segment_ids)
-        #
-        #         if IsCrf:
-        #             output_topk = bert_classify.crf.decode(batch_output, segment_ids.to(torch.uint8))[0]
-        #         else:
-        #             batch_output = batch_output[:, :input_len, :]
-        #             output_tensor = torch.nn.Softmax(dim=-1)(batch_output)
-        #             output_topk = torch.topk(output_tensor, 1).indices.squeeze(0).tolist()
-        #             output_topk = [x[0] for x in output_topk]
-        #
-        #         # 累计数值
-        #         for i, output in enumerate(output_topk):
-        #             output2class.append(num_to_class[output])
-        #             label2class.append(num_to_class[label_list[i]])
-        #         output_entities = extract_output_entities(output2class)
-        #         label_entities = extract_label_entities(label2class)
-        #
-        #         # 核算结果
-        #         entities_count += len(label_entities.keys())
-        #         recall_list = []
-        #         for out_num in output_entities.keys():
-        #             if out_num in label_entities.keys():
-        #                 recall_list.append(out_num)
-        #         recall += len(recall_list)
-        #         for num in recall_list:
-        #             if output_entities[num] == label_entities[num]:
-        #                 accuracy += 1
-        #     if entities_count:
-        #         recall_rate = float(recall) / float(entities_count)
-        #         recall_rate = round(recall_rate, 4)
-        #         print('实体召回率为：%s' % recall_rate)
-        #         accuracy_rate = float(accuracy) / float(recall)
-        #         accuracy_rate = round(accuracy_rate, 4)
-        #         print('实体正确率为：%s\n' % accuracy_rate)
+        with torch.no_grad():
+            bert_classify.eval()
+            correct = 0
+            total = 0
+            pred_list = []
+            label_list = []
+
+            for eval_data in evalset:
+                total += 1
+                label = eval_data['eval_label'].tolist()
+                input_token = eval_data['eval_input'].unsqueeze(0).to(device)
+                segment_ids = eval_data['eval_segment'].unsqueeze(0).to(device)
+                position_ids = eval_data['eval_position'].unsqueeze(0).to(device)
+                output = bert_classify(input_token, position_ids, segment_ids, AttentionMask)
+                output = torch.nn.Softmax(dim=-1)(output)
+                topk = torch.topk(output, 1).indices.squeeze(0).tolist()[0]
+                pred_list.append(topk)
+                label_list.append(label)
+                # 累计数值
+                if label == topk:
+                    correct += 1
+
+            acc_rate = float(correct) / float(total)
+            acc_rate = round(acc_rate, 2)
+            print('验证集正确率：%s' % acc_rate)
+
+            eval_f1 = get_f1(label_list, pred_list)
+
+            # save
+            if eval_f1 > best_eval_f1:
+                best_eval_f1 = eval_f1
+                torch.save(bert_classify.cpu(), FinetunePath)
+                bert_classify.to(device)
+                print('EP:%d Model Saved on:%s' % (epoch, FinetunePath))
+            print(epoch, 'oce eval f1 is:%s\n' % eval_f1)
