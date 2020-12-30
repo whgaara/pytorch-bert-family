@@ -12,7 +12,7 @@ def parse_data(src_path, train_path, eval_path, c2n_path):
             if line:
                 line = line.strip().split(SegmentChar)
                 label = line[0]
-                input = line[1]
+                input = line[1].lower()
                 if label not in class2num:
                     class2num[label] = len(class2num)
                 src_data.append((label, input))

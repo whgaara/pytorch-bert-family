@@ -21,7 +21,7 @@ class Inference(object):
 
     def inference_single(self, input):
         if input:
-            current_words = list(input)
+            current_words = list(input.lower())
             current_words = ['[CLS]'] + current_words
             tokens_id = self.tokenizer.tokens_to_ids(current_words)
             input_token = torch.tensor(tokens_id, dtype=torch.long).unsqueeze(0).to(device)
