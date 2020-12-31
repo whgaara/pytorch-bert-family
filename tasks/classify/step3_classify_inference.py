@@ -24,9 +24,9 @@ class Inference(object):
             for x, y in self.classes2num.items():
                 self.num2classes[y] = x
 
-    def inference_single(self, input):
-        if input:
-            current_words = list(input.lower())
+    def inference_single(self, input_data):
+        if input_data:
+            current_words = list(input_data.lower())
             current_words = ['[CLS]'] + current_words
             tokens_id = self.tokenizer.tokens_to_ids(current_words)
             input_token = torch.tensor(tokens_id, dtype=torch.long).unsqueeze(0).to(device)
@@ -38,17 +38,20 @@ class Inference(object):
             output_prob = round(torch.topk(output, 1).values.squeeze(0).tolist()[0], 4)
             output_num = torch.topk(output, 1).indices.squeeze(0).tolist()[0]
             current_label = self.num2classes[output_num]
-            print('"%s"的疾病类别是：%s' % (input, current_label))
+            print('输入内容：%s，疾病类型：%s，置信度：%s。\n' % (input_data, label, prob))
             return current_label, output_prob
         else:
             print('您的输入有异常！')
             return None, None
 
     def inference_group(self, file_path):
+        result = []
         with open(file_path, 'r', encoding='utf-8') as f:
             for line in tqdm(f):
                 if line:
                     label, prob = self.inference_single(line.strip())
+                    result.append([line.strip(), label, prob])
+        return result
 
 
 if __name__ == '__main__':
@@ -62,4 +65,3 @@ if __name__ == '__main__':
             print('您输入的内容为空，请重新输入！\n')
         if data:
             label, prob = bert_infer.inference_single(data)
-            print('疾病类型：%s，置信度：%s。\n' % (label, prob))
