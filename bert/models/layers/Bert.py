@@ -6,8 +6,8 @@ from bert.models.layers.Transformer import Transformer
 class Bert(nn.Module):
     def __init__(self,
                  device,
-                 hidden,
                  vocab_size,
+                 hidden_size,
                  dropout_prob,
                  attention_heads,
                  num_hidden_layers,
@@ -16,11 +16,11 @@ class Bert(nn.Module):
         super(Bert, self).__init__()
         self.device = device
         self.vocab_size = vocab_size
-        self.hidden_size = hidden
+        self.hidden_size = hidden_size
         self.num_hidden_layers = num_hidden_layers
         self.attention_head_num = attention_heads
         self.dropout_prob = dropout_prob
-        self.attention_head_size = hidden // attention_heads
+        self.attention_head_size = hidden_size // attention_heads
         self.intermediate_size = intermediate_size
 
         # 申明网络

@@ -27,7 +27,7 @@ class BertClassify(nn.Module):
         # 申明网络
         self.bert = Bert(
             device,
-            hidden=self.hidden_size,
+            hidden_size=self.hidden_size,
             vocab_size=self.vocab_size,
             dropout_prob=self.dropout_prob,
             attention_heads=self.attention_head_num,
