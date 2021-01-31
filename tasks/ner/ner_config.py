@@ -8,7 +8,7 @@ cuda_condition = torch.cuda.is_available()
 device = torch.device('cuda:0' if cuda_condition else 'cpu')
 
 # 保存最大句长，字符数，类别数
-Assistant = 'data/classify/assistant.txt'
+Assistant = 'data/ner/assistant.txt'
 
 # ## 训练调试参数开始 ## #
 Epochs = 16
@@ -30,11 +30,11 @@ root = '/'.join(os.getcwd().split('/')[:-2])
 UserDict = os.path.join(root, 'data/key.txt')
 StopDict = os.path.join(root, 'data/stop.txt')
 VocabPath = os.path.join(root, 'data/vocab.txt')
-SourcePath = os.path.join(root, 'data/classify/source_data.txt')
-TrainPath = os.path.join(root, 'data/classify/train_data.txt')
-EvalPath = os.path.join(root, 'data/classify/eval_data.txt')
-C2NPicklePath = os.path.join(root, 'data/classify/classes2num.pickle')
-FinetunePath = os.path.join(root, 'checkpoint/finetune/classify/bert_cls_%s_%s.model' % (SentenceLength, HiddenLayerNum))
+SourcePath = os.path.join(root, 'data/ner/source_data')
+TrainPath = os.path.join(root, 'data/ner/train_data.txt')
+EvalPath = os.path.join(root, 'data/ner/eval_data.txt')
+C2NPicklePath = os.path.join(root, 'data/ner/classes2num.pickle')
+FinetunePath = os.path.join(root, 'checkpoint/finetune/ner/bert_cls_%s_%s.model' % (SentenceLength, HiddenLayerNum))
 PretrainPath = os.path.join(root, 'checkpoint/pretrain/pytorch_model.bin')
 
 try:
