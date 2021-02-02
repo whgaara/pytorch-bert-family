@@ -28,6 +28,8 @@ def parse(src_path, train_path, eval_path, c2n_path):
             for word_couple in f:
                 if word_couple:
                     word, label = tuple(word_couple.strip().split(' '))
+                    if word == 'END':
+                        continue
                     words.append(word)
                     wordnums.append(str(tokenizer.token_to_id(word)))
                     if label == 'O':
