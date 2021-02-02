@@ -3,7 +3,6 @@
 # linux环境使用
 # import sys
 # sys.path.append('根目录')
-import random
 
 from ner_config import *
 from bert.common.tokenizers import Tokenizer
@@ -30,25 +29,38 @@ def parse(src_path, train_path, eval_path, c2n_path):
                 if word_couple:
                     word, label = tuple(word_couple.strip().split(' '))
                     words.append(word)
-                    wordnums.append(tokenizer.token_to_id(word))
+                    wordnums.append(str(tokenizer.token_to_id(word)))
                     if label == 'O':
                         label = 'ptzf'
                     if label == 'ptzf':
                         labels.append(label)
-                        labelnums.append(wordlabel2num[label])
+                        labelnums.append(str(wordlabel2num[label]))
                     else:
                         labels.append(label)
                         if label not in wordlabel2num:
                             wordlabel2num[label] = len(wordlabel2num)
-                        labelnums.append(wordlabel2num[label])
-                    all_items.append([words, wordnums, labels, labelnums])
+                        labelnums.append(str(wordlabel2num[label]))
+        all_items.append([words, wordnums, labels, labelnums])
     random.shuffle(all_items)
     train_line = int(len(all_items) * TrainRate)
     train_items = all_items[:train_line]
     eval_items = all_items[train_line:]
 
     # 写入到文件中
-
+    with open(c2n_path, 'wb') as f:
+        pickle.dump(wordlabel2num, f)
+    for item in train_items:
+        sentence = ''.join(item[0])
+        wordnums = ' '.join(item[1])
+        labels = ' '.join(item[2])
+        labelnums = ' '.join(item[3])
+        f_train.write(sentence + '\t' + wordnums + '\t' + labels + '\t' + labelnums + '\n')
+    for item in eval_items:
+        sentence = ''.join(item[0])
+        wordnums = ' '.join(item[1])
+        labels = ' '.join(item[2])
+        labelnums = ' '.join(item[3])
+        f_eval.write(sentence + '\t' + wordnums + '\t' + labels + '\t' + labelnums + '\n')
 
 
 if __name__ == '__main__':
