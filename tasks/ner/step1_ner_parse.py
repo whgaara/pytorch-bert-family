@@ -42,6 +42,10 @@ def parse(src_path, train_path, eval_path, c2n_path):
                         if label not in wordlabel2num:
                             wordlabel2num[label] = len(wordlabel2num)
                         labelnums.append(str(wordlabel2num[label]))
+        # 过滤过长语句
+        if len(words) > SentenceLength:
+            print('当前语句过长！语句内容为：%s!' % ''.join(words))
+            continue
         all_items.append([words, wordnums, labels, labelnums])
     random.shuffle(all_items)
     train_line = int(len(all_items) * TrainRate)
