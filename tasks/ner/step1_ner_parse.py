@@ -20,10 +20,10 @@ def parse(src_path, train_path, eval_path, c2n_path):
     all_items = []
 
     for file in os.listdir(src_path):
-        words = []
-        wordnums = []
-        labels = []
-        labelnums = []
+        words = ['[CLS]']
+        wordnums = ['101']
+        labels = ['ptzf']
+        labelnums = ['0']
         with open(os.path.join(src_path, file), 'r', encoding='utf-8') as f:
             for word_couple in f:
                 if word_couple:

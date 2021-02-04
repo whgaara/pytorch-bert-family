@@ -2,6 +2,8 @@ import torch.nn as nn
 
 from tasks.classify.classify_config import *
 from torchcrf import CRF
+from bert.models.layers.Bert import Bert
+
 from layers.layers.BiGRU import BiGRU
 from layers.layers.Classify import Classify
 from layers.layers.bert.Transformer import Transformer
