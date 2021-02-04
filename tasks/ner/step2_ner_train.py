@@ -1,5 +1,4 @@
 # coding: utf-8
-
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 
@@ -12,9 +11,9 @@ import torch.nn as nn
 from tqdm import tqdm
 from torch.optim import Adam
 from sklearn.metrics import f1_score
-from bert.data.classify_dataset import BertClsDataSet, BertClsEvalSet
-from tasks.classify.classify_config import *
-from bert.models.tasks.BertClassify import BertClassify
+from tasks.ner.ner_config import *
+from bert.models.tasks.BertNer import BertNerBiRnnCrf
+from bert.data.ner_dataset import NerDataSet, NerEvalSet
 
 
 def get_f1(l_t, l_p):
@@ -24,8 +23,8 @@ def get_f1(l_t, l_p):
 
 if __name__ == '__main__':
     best_eval_f1 = 0
-    dataset = BertClsDataSet(TrainPath, VocabPath, C2NPicklePath)
-    evalset = BertClsEvalSet(EvalPath, VocabPath, C2NPicklePath)
+    dataset = NerDataSet()
+    evalset = NerEvalSet()
 
     # 加载类别映射表
     with open(C2NPicklePath, 'rb') as f:
@@ -35,19 +34,19 @@ if __name__ == '__main__':
         num_to_class[v] = k
 
     number_of_categories = len(class_to_num)
-    bert_classify = BertClassify(number_of_categories).to(device)
+    bert_ner = BertNerBiRnnCrf(number_of_categories).to(device)
 
     if os.path.exists(FinetunePath):
         print('开始加载本地预训练模型！')
-        bert_classify.load_finetune(FinetunePath)
+        bert_ner.load_finetune(FinetunePath)
         print('完成加载本地预训练模型！\n')
     else:
         print('开始加载外部预训练模型！')
-        bert_classify.load_pretrain(PretrainPath)
+        bert_ner.load_pretrain(PretrainPath)
         print('完成加载外部预训练模型！\n')
-    bert_classify = bert_classify.to(device)
+    bert_ner = bert_ner.to(device)
 
-    optim = Adam(bert_classify.parameters(), lr=LearningRate)
+    optim = Adam(bert_ner.parameters(), lr=LearningRate)
     criterion = nn.CrossEntropyLoss().to(device)
 
     for epoch in range(Epochs):
@@ -55,7 +54,7 @@ if __name__ == '__main__':
         gt_list = []
 
         # train
-        bert_classify.train()
+        bert_ner.train()
         data_iter = tqdm(enumerate(dataset),
                          desc='EP_%s:%d' % ('train', epoch),
                          total=len(dataset),
@@ -67,7 +66,7 @@ if __name__ == '__main__':
             batch_segments = data['batch_segments']
             batch_positions = data['batch_positions']
 
-            batch_output = bert_classify(batch_inputs, batch_positions, batch_segments, AttentionMask)
+            batch_output = bert_ner(batch_inputs, batch_positions, batch_segments, AttentionMask)
             mask_loss = criterion(batch_output, batch_labels)
             print_loss = mask_loss.item()
 
@@ -88,7 +87,7 @@ if __name__ == '__main__':
 
         # eval
         with torch.no_grad():
-            bert_classify.eval()
+            bert_ner.eval()
             correct = 0
             total = 0
             pred_list = []
@@ -100,7 +99,7 @@ if __name__ == '__main__':
                 input_token = eval_data['eval_input'].unsqueeze(0).to(device)
                 segment_ids = eval_data['eval_segment'].unsqueeze(0).to(device)
                 position_ids = eval_data['eval_position'].unsqueeze(0).to(device)
-                output = bert_classify(input_token, position_ids, segment_ids, AttentionMask)
+                output = bert_ner(input_token, position_ids, segment_ids, AttentionMask)
                 output = torch.nn.Softmax(dim=-1)(output)
                 topk = torch.topk(output, 1).indices.squeeze(0).tolist()[0]
                 pred_list.append(topk)
@@ -119,8 +118,8 @@ if __name__ == '__main__':
             # save
             if eval_f1 > best_eval_f1:
                 best_eval_f1 = eval_f1
-                torch.save(bert_classify.cpu(), FinetunePath)
-                bert_classify.to(device)
+                torch.save(bert_ner.cpu(), FinetunePath)
+                bert_ner.to(device)
                 print('EP:%d Model Saved on:%s' % (epoch, FinetunePath))
 
             print('\n')
