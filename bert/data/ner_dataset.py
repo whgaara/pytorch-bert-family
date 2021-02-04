@@ -38,9 +38,11 @@ class NerDataSet(Dataset):
                 batch_item[2] = batch_item[2] + ['ptzf'] * (group_max_len - len(batch_item[2]))
                 batch_item[3] = batch_item[3] + [0] * (group_max_len - len(batch_item[3]))
                 input_segments_id = [1 if x else 0 for x in batch_item[1]]
+                input_positions_id = [x for x in range(len(batch_item[1]))]
                 tmp = {
                     'input_tokens_id': batch_item[1],
                     'input_segments_id': input_segments_id,
+                    'input_positions_id': input_positions_id,
                     'input_tokens_label_id': batch_item[3]
                 }
                 tmp = {k: torch.tensor(v, dtype=torch.long) for k, v in tmp.items()}
@@ -71,9 +73,11 @@ class NerEvalSet(Dataset):
                     input_tokens_id = [int(x) for x in input_tokens_id.split(' ')]
                     input_segments_id = [1 if x else 0 for x in input_tokens_id]
                     input_tokens_label_id = [int(x) for x in input_tokens_label_id.split(' ')]
+                    input_positions_id = [x for x in range(len(input_tokens_id))]
                     tmp = {
                         'input_tokens_id': input_tokens_id,
                         'input_segments_id': input_segments_id,
+                        'input_positions_id': input_positions_id,
                         'input_tokens_label_id': input_tokens_label_id
                     }
                     tmp = {k: torch.tensor(v, dtype=torch.long) for k, v in tmp.items()}
