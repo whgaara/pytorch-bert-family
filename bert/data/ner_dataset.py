@@ -48,7 +48,7 @@ class NerDataSet(Dataset):
                 tmp['batch_labels'].append(batch_item[3])
                 tmp['batch_segments'].append(input_segments_id)
                 tmp['batch_positions'].append(input_positions_id)
-            tmp = {k: torch.tensor(v, dtype=torch.long) for k, v in tmp.items()}
+            tmp = {k: torch.tensor(v, dtype=torch.long).to(device) for k, v in tmp.items()}
             self.tar_lines.append(tmp)
 
     def __len__(self):
@@ -82,7 +82,7 @@ class NerEvalSet(Dataset):
                         'eval_segment': input_segments_id,
                         'eval_position': input_positions_id
                     }
-                    tmp = {k: torch.tensor(v, dtype=torch.long) for k, v in tmp.items()}
+                    tmp = {k: torch.tensor(v, dtype=torch.long).to(device) for k, v in tmp.items()}
                     self.tar_lines.append(tmp)
 
     def __len__(self):
