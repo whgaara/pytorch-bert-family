@@ -38,7 +38,6 @@ class NerDataSet(Dataset):
             group_max_len = max([len(x[1]) for x in batch_group])
             for batch_item in batch_group:
                 batch_item[1] = batch_item[1] + [0] * (group_max_len - len(batch_item[1]))
-                batch_item[2] = batch_item[2] + ['ptzf'] * (group_max_len - len(batch_item[2]))
                 batch_item[3] = batch_item[3] + [0] * (group_max_len - len(batch_item[3]))
                 input_segments_id = [1 if x else 0 for x in batch_item[1]]
                 input_positions_id = [x for x in range(len(batch_item[1]))]

@@ -4,7 +4,6 @@ from tasks.classify.classify_config import *
 
 class BertClsDataSet(Dataset):
     def __init__(self):
-        # 属性初始化
         self.src_lines = []
         self.tar_lines = []
 
