@@ -99,7 +99,6 @@ if __name__ == '__main__':
             label_list = []
 
             for eval_data in evalset:
-                total += 1
                 eval_label = eval_data['eval_label'].tolist()
                 eval_input = eval_data['eval_input'].unsqueeze(0).to(device)
                 eval_segment = eval_data['eval_segment'].unsqueeze(0).to(device)
@@ -116,6 +115,7 @@ if __name__ == '__main__':
                 label_list.extend(eval_label)
                 # 累计数值
                 for x, y in zip(eval_topk, eval_label):
+                    total += 1
                     if x == y:
                         correct += 1
 
