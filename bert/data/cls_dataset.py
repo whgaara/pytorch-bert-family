@@ -111,9 +111,9 @@ class BertClsEvalSet(Dataset):
 
 
 if __name__ == '__main__':
-    # tt = BertClsDataSet(train_path='../../data/classify/train_data.txt',
+    # tt = BertClsDataSet(train_path='../../data/cls/train_data.txt',
     #                     vocab_path='../../data/vocab.txt',
-    #                     c2n_path='../../data/classify/classes2num.pickle')
+    #                     c2n_path='../../data/cls/classes2num.pickle')
     hh = BertClsEvalSet(EvalPath, VocabPath, C2NPicklePath)
     for x in hh:
         y = 1
