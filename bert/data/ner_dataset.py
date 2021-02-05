@@ -1,11 +1,9 @@
 from tasks.ner.ner_config import *
 from torch.utils.data import Dataset
-from bert.common.tokenizers import Tokenizer
 
 
 class NerDataSet(Dataset):
     def __init__(self):
-        self.tokenizer = Tokenizer(VocabPath)
         self.src_lines = []
         self.tar_lines = []
 
@@ -60,7 +58,6 @@ class NerDataSet(Dataset):
 
 class NerEvalSet(Dataset):
     def __init__(self):
-        self.tokenizer = Tokenizer(VocabPath)
         self.tar_lines = []
 
         # 读取训练数据

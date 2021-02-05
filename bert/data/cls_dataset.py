@@ -4,40 +4,54 @@ from tasks.classify.classify_config import *
 
 
 class BertClsDataSet(Dataset):
-    def __init__(self, train_path, vocab_path=VocabPath, c2n_path=C2NPicklePath):
+    def __init__(self):
         # 属性初始化
-        self.train_path = train_path
-        self.vocab_path = vocab_path
-        self.c2n_path = c2n_path
-        self.train_data = []
-        self.tokenizer = Tokenizer(self.vocab_path)
-        with open(self.c2n_path, 'rb') as f:
-            self.classes2num = pickle.load(f)
+        self.src_lines = []
+        self.tar_lines = []
 
-        # 方法初始化
-        self.__load_train_data(self.train_path)
-
-    def __load_train_data(self, train_path):
-        with open(train_path, 'r', encoding='utf-8') as f:
+        with open(TrainPath, 'r', encoding='utf-8') as f:
             batch_tmp = []
             for line in f:
                 if line:
                     batch_tmp.append(line.strip())
                     if len(batch_tmp) == BatchSize:
-                        self.train_data.append(batch_tmp)
+                        self.src_lines.append(batch_tmp)
                         batch_tmp = []
             if len(batch_tmp) > 0:
-                self.train_data.append(batch_tmp)
+                self.src_lines.append(batch_tmp)
+
+        # 格式化所有batch数据
+        for batch_group in self.src_lines:
+            tmp = {
+                'batch_inputs': [],
+                'batch_labels': [],
+                'batch_segments': [],
+                'batch_positions': []
+            }
+            group_max_len = max([len(x[1]) for x in batch_group])
+            for batch_item in batch_group:
+                batch_item[1] = batch_item[1] + [0] * (group_max_len - len(batch_item[1]))
+                batch_item[2] = batch_item[2] + ['ptzf'] * (group_max_len - len(batch_item[2]))
+                batch_item[3] = batch_item[3] + [0] * (group_max_len - len(batch_item[3]))
+                input_segments_id = [1 if x else 0 for x in batch_item[1]]
+                input_positions_id = [x for x in range(len(batch_item[1]))]
+                tmp['batch_inputs'].append(batch_item[1])
+                tmp['batch_labels'].append(batch_item[3])
+                tmp['batch_segments'].append(input_segments_id)
+                tmp['batch_positions'].append(input_positions_id)
+            tmp = {k: torch.tensor(v, dtype=torch.long).to(device) for k, v in tmp.items()}
+            self.tar_lines.append(tmp)
+
 
     def __len__(self):
-        return len(self.train_data)
+        return len(self.src_lines)
 
     def __getitem__(self, item):
         instance = {}
 
         # 获取一个batch
         batch_max = 0
-        batch_data = self.train_data[item]
+        batch_data = self.src_lines[item]
         batch_labels = []
         batch_inputs = []
         batch_segments = []
@@ -111,9 +125,9 @@ class BertClsEvalSet(Dataset):
 
 
 if __name__ == '__main__':
-    # tt = BertClsDataSet(train_path='../../data/cls/train_data.txt',
-    #                     vocab_path='../../data/vocab.txt',
-    #                     c2n_path='../../data/cls/classes2num.pickle')
-    hh = BertClsEvalSet(EvalPath, VocabPath, C2NPicklePath)
+    tt = BertClsDataSet()
+    for x in tt:
+        x = 1
+    hh = BertClsEvalSet()
     for x in hh:
         y = 1

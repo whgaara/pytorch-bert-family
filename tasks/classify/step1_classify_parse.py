@@ -5,6 +5,10 @@
 # sys.path.append('根目录')
 
 from classify_config import *
+from bert.common.tokenizers import Tokenizer
+
+
+tokenizer = Tokenizer(VocabPath)
 
 
 def parse_data(src_path, train_path, eval_path, c2n_path):
@@ -16,12 +20,20 @@ def parse_data(src_path, train_path, eval_path, c2n_path):
     with open(src_path, 'r', encoding='utf-8') as f:
         for line in f:
             if line:
+                chars2nums = ['101']
+
                 line = line.strip().split(SegmentChar)
-                label = line[0]
                 input = line[1].lower()
+                for char in input:
+                    chars2nums.append(str(tokenizer.token_to_id(char)))
+
+                label = line[0]
                 if label not in class2num:
                     class2num[label] = len(class2num)
-                src_data.append((label, input))
+                label2num = str(class2num[label])
+                input = '[CLS]' + input
+                chars2nums = ' '.join(chars2nums)
+                src_data.append((label, label2num, input, chars2nums))
 
     random.shuffle(src_data)
     train_count = int(len(src_data) * TrainRate)
@@ -31,9 +43,9 @@ def parse_data(src_path, train_path, eval_path, c2n_path):
     with open(c2n_path, 'wb') as f:
         pickle.dump(class2num, f)
     for item in train_data:
-        ft.write(item[0] + SegmentChar + item[1] + '\n')
+        ft.write(item[0] + SegmentChar + item[1] + SegmentChar + item[2] + SegmentChar + item[3] + '\n')
     for item in eval_data:
-        fe.write(item[0] + SegmentChar + item[1] + '\n')
+        fe.write(item[0] + SegmentChar + item[1] + SegmentChar + item[2] + SegmentChar + item[3] + '\n')
 
 
 if __name__ == '__main__':

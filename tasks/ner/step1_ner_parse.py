@@ -28,13 +28,13 @@ def parse(src_path, train_path, eval_path, c2n_path):
             for word_couple in f:
                 if word_couple:
                     try:
-                        word, label = tuple(word_couple.strip().split(' '))
+                        char, label = tuple(word_couple.strip().split(' '))
                     except:
                         continue
-                    if word == 'END':
+                    if char == 'END':
                         continue
-                    words.append(word)
-                    wordnums.append(str(tokenizer.token_to_id(word)))
+                    words.append(char)
+                    wordnums.append(str(tokenizer.token_to_id(char)))
                     if label == 'O':
                         label = 'ptzf'
                     if label == 'ptzf':
