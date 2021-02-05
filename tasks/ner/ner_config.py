@@ -27,7 +27,7 @@ AttentionHeadNum = 12
 # ## 训练调试参数结束 ## #
 
 # ## 模型文件路径 ## #
-root = '/'.join(os.getcwd().split('/')[:-2])
+root = '/'.join(os.getcwd().replace('\\', '/').split('/')[:-2])
 UserDict = os.path.join(root, 'data/key.txt')
 StopDict = os.path.join(root, 'data/stop.txt')
 VocabPath = os.path.join(root, 'data/vocab.txt')
