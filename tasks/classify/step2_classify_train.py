@@ -24,8 +24,8 @@ def get_f1(l_t, l_p):
 
 if __name__ == '__main__':
     best_eval_f1 = 0
-    dataset = BertClsDataSet(TrainPath, VocabPath, C2NPicklePath)
-    evalset = BertClsEvalSet(EvalPath, VocabPath, C2NPicklePath)
+    dataset = BertClsDataSet()
+    evalset = BertClsEvalSet()
 
     # 加载类别映射表
     with open(C2NPicklePath, 'rb') as f:

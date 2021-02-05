@@ -61,7 +61,7 @@ class NerEvalSet(Dataset):
         self.tar_lines = []
 
         # 读取训练数据
-        with open(TrainPath, 'r', encoding='utf-8') as f:
+        with open(EvalPath, 'r', encoding='utf-8') as f:
             for line in f:
                 if line:
                     line = line.strip()
