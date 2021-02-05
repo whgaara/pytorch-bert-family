@@ -27,7 +27,10 @@ def parse(src_path, train_path, eval_path, c2n_path):
         with open(os.path.join(src_path, file), 'r', encoding='utf-8') as f:
             for word_couple in f:
                 if word_couple:
-                    word, label = tuple(word_couple.strip().split(' '))
+                    try:
+                        word, label = tuple(word_couple.strip().split(' '))
+                    except:
+                        continue
                     if word == 'END':
                         continue
                     words.append(word)
