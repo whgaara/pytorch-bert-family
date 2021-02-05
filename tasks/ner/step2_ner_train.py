@@ -66,15 +66,19 @@ if __name__ == '__main__':
             batch_segments = data['batch_segments']
             batch_positions = data['batch_positions']
 
-            batch_output = bert_ner(batch_inputs, batch_positions, batch_segments, AttentionMask)
-            mask_loss = criterion(batch_output, batch_labels)
-            print_loss = mask_loss.item()
+            if IsCrf:
+                ner_output = bert_ner(batch_inputs, batch_positions, batch_segments, AttentionMask)
+                mask_loss = -1 * bert_ner.crf(emissions=ner_output, tags=label, mask=segment_ids.to(torch.uint8))
+            else:
+                ner_output = bert_ner(batch_inputs, batch_positions, batch_segments, AttentionMask).permute(0, 2, 1)
+                mask_loss = criterion(ner_output, batch_labels)
 
+            print_loss = mask_loss.item()
             mask_loss.backward()
             optim.step()
             optim.zero_grad()
 
-            batch_output = torch.nn.Softmax(dim=-1)(batch_output)
+            batch_output = torch.nn.Softmax(dim=-1)(ner_output)
             output_topk = torch.topk(batch_output, 1).indices.squeeze(0).tolist()
 
             # 收集结果

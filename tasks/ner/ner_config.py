@@ -11,6 +11,7 @@ device = torch.device('cuda:0' if cuda_condition else 'cpu')
 Assistant = 'data/ner/assistant.txt'
 
 # ## 训练调试参数开始 ## #
+IsCrf = True
 Epochs = 16
 DropOut = 0.1
 BatchSize = 8

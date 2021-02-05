@@ -12,7 +12,7 @@ import torch.nn as nn
 from tqdm import tqdm
 from torch.optim import Adam
 from sklearn.metrics import f1_score
-from bert.data.classify_dataset import BertClsDataSet, BertClsEvalSet
+from bert.data.cls_dataset import BertClsDataSet, BertClsEvalSet
 from tasks.classify.classify_config import *
 from bert.models.tasks.BertClassify import BertClassify
 

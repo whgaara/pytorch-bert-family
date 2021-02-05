@@ -40,10 +40,10 @@ class NerDataSet(Dataset):
                 input_segments_id = [1 if x else 0 for x in batch_item[1]]
                 input_positions_id = [x for x in range(len(batch_item[1]))]
                 tmp = {
-                    'input_tokens_id': batch_item[1],
-                    'input_segments_id': input_segments_id,
-                    'input_positions_id': input_positions_id,
-                    'input_tokens_label_id': batch_item[3]
+                    'batch_inputs': batch_item[1],
+                    'batch_labels': batch_item[3],
+                    'batch_segments': input_segments_id,
+                    'batch_positions': input_positions_id
                 }
                 tmp = {k: torch.tensor(v, dtype=torch.long) for k, v in tmp.items()}
                 dict_group.append(tmp)
@@ -75,10 +75,10 @@ class NerEvalSet(Dataset):
                     input_tokens_label_id = [int(x) for x in input_tokens_label_id.split(' ')]
                     input_positions_id = [x for x in range(len(input_tokens_id))]
                     tmp = {
-                        'input_tokens_id': input_tokens_id,
-                        'input_segments_id': input_segments_id,
-                        'input_positions_id': input_positions_id,
-                        'input_tokens_label_id': input_tokens_label_id
+                        'eval_input': input_tokens_id,
+                        'eval_label': input_tokens_label_id,
+                        'eval_segment': input_segments_id,
+                        'eval_position': input_positions_id
                     }
                     tmp = {k: torch.tensor(v, dtype=torch.long) for k, v in tmp.items()}
                     self.tar_lines.append(tmp)
