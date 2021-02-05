@@ -76,11 +76,11 @@ if __name__ == '__main__':
             optim.zero_grad()
 
             batch_output = torch.nn.Softmax(dim=-1)(batch_output)
-            output_topk = torch.topk(batch_output, 1).indices.squeeze(0).tolist()
+            output_topk = torch.topk(batch_output, 1).indices.squeeze(-1).tolist()
 
             # 收集结果
             gt_list.extend(batch_labels.tolist())
-            pre_list.extend([x[0] for x in output_topk])
+            pre_list.extend(output_topk)
 
         print('EP_%d mask loss:%s' % (epoch, print_loss))
         cls_f1 = get_f1(gt_list, pre_list)

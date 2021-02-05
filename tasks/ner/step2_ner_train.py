@@ -68,26 +68,27 @@ if __name__ == '__main__':
 
             if IsCrf:
                 ner_output = bert_ner(batch_inputs, batch_positions, batch_segments, AttentionMask)
-                mask_loss = -1 * bert_ner.crf(emissions=ner_output, tags=label, mask=segment_ids.to(torch.uint8))
+                mask_loss = -1 * bert_ner.crf(emissions=ner_output, tags=batch_labels, mask=batch_segments.to(torch.uint8))
+                batch_output = torch.nn.Softmax(dim=-1)(ner_output)
+                batch_topk = torch.topk(batch_output, 1).indices.squeeze(-1).tolist()
             else:
                 ner_output = bert_ner(batch_inputs, batch_positions, batch_segments, AttentionMask).permute(0, 2, 1)
                 mask_loss = criterion(ner_output, batch_labels)
+                batch_output = torch.nn.Softmax(dim=-1)(ner_output.permute(0, 2, 1))
+                batch_topk = torch.topk(batch_output, 1).indices.squeeze(-1).tolist()
 
             print_loss = mask_loss.item()
             mask_loss.backward()
             optim.step()
             optim.zero_grad()
 
-            batch_output = torch.nn.Softmax(dim=-1)(ner_output)
-            output_topk = torch.topk(batch_output, 1).indices.squeeze(0).tolist()
-
             # 收集结果
-            gt_list.extend(batch_labels.tolist())
-            pre_list.extend([x[0] for x in output_topk])
+            gt_list.extend(sum(batch_labels.tolist(), []))
+            pre_list.extend(sum(batch_topk, []))
 
         print('EP_%d mask loss:%s' % (epoch, print_loss))
         cls_f1 = get_f1(gt_list, pre_list)
-        print(epoch, 'train-classify f1 is:%s' % cls_f1)
+        print(epoch, 'train-ner f1 is:%s' % cls_f1)
 
         # eval
         with torch.no_grad():
@@ -99,25 +100,31 @@ if __name__ == '__main__':
 
             for eval_data in evalset:
                 total += 1
-                label = eval_data['eval_label'].tolist()
-                input_token = eval_data['eval_input'].unsqueeze(0).to(device)
-                segment_ids = eval_data['eval_segment'].unsqueeze(0).to(device)
-                position_ids = eval_data['eval_position'].unsqueeze(0).to(device)
-                output = bert_ner(input_token, position_ids, segment_ids, AttentionMask)
-                output = torch.nn.Softmax(dim=-1)(output)
-                topk = torch.topk(output, 1).indices.squeeze(0).tolist()[0]
-                pred_list.append(topk)
-                label_list.append(label)
+                eval_label = eval_data['eval_label'].tolist()
+                eval_input = eval_data['eval_input'].unsqueeze(0).to(device)
+                eval_segment = eval_data['eval_segment'].unsqueeze(0).to(device)
+                eval_position = eval_data['eval_position'].unsqueeze(0).to(device)
+                eval_output = bert_ner(eval_input, eval_position, eval_segment, AttentionMask)
+
+                if IsCrf:
+                    eval_topk = bert_ner.crf.decode(eval_output, eval_segment.to(torch.uint8))[0]
+                else:
+                    output_tensor = torch.nn.Softmax(dim=-1)(eval_output)
+                    eval_topk = torch.topk(output_tensor, 1).indices.squeeze(0).squeeze(-1).tolist()
+
+                pred_list.extend(eval_topk)
+                label_list.extend(eval_label)
                 # 累计数值
-                if label == topk:
-                    correct += 1
+                for x, y in zip(eval_topk, eval_label):
+                    if x == y:
+                        correct += 1
 
             acc_rate = float(correct) / float(total)
             acc_rate = round(acc_rate, 2)
             print('验证集正确率：%s' % acc_rate)
 
             eval_f1 = get_f1(label_list, pred_list)
-            print(epoch, 'eval-classify f1 is:%s' % eval_f1)
+            print(epoch, 'eval-ner f1 is:%s' % eval_f1)
 
             # save
             if eval_f1 > best_eval_f1:

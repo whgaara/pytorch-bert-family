@@ -11,10 +11,10 @@ device = torch.device('cuda:0' if cuda_condition else 'cpu')
 Assistant = 'data/ner/assistant.txt'
 
 # ## 训练调试参数开始 ## #
-IsCrf = True
+IsCrf = False
 Epochs = 16
 DropOut = 0.1
-BatchSize = 8
+BatchSize = 2
 TrainRate = 0.9
 HiddenSize = 768
 SegmentChar = '	'
@@ -35,7 +35,7 @@ SourcePath = os.path.join(root, 'data/ner/source_data')
 TrainPath = os.path.join(root, 'data/ner/train_data.txt')
 EvalPath = os.path.join(root, 'data/ner/eval_data.txt')
 C2NPicklePath = os.path.join(root, 'data/ner/classes2num.pickle')
-FinetunePath = os.path.join(root, 'checkpoint/finetune/ner/bert_cls_%s_%s.model' % (SentenceLength, HiddenLayerNum))
+FinetunePath = os.path.join(root, 'checkpoint/finetune/ner/bert_ner_%s_%s.model' % (SentenceLength, HiddenLayerNum))
 PretrainPath = os.path.join(root, 'checkpoint/pretrain/pytorch_model.bin')
 
 try:
