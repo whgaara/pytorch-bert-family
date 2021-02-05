@@ -18,7 +18,7 @@ class NerDataSet(Dataset):
                     batch_group = []
                 if line:
                     line = line.strip()
-                    items = line.split('\t')
+                    items = line.split(SegmentChar)
                     input_tokens, input_tokens_id, input_tokens_label, input_tokens_label_id = items
                     if not input_tokens:
                         continue
@@ -68,7 +68,7 @@ class NerEvalSet(Dataset):
             for line in f:
                 if line:
                     line = line.strip()
-                    items = line.split('\t')
+                    items = line.split(SegmentChar)
                     input_tokens, input_tokens_id, input_tokens_label, input_tokens_label_id = items
                     if not input_tokens:
                         continue

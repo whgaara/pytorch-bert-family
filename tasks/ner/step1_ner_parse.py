@@ -63,13 +63,13 @@ def parse(src_path, train_path, eval_path, c2n_path):
         wordnums = ' '.join(item[1])
         labels = ' '.join(item[2])
         labelnums = ' '.join(item[3])
-        f_train.write(sentence + '\t' + wordnums + '\t' + labels + '\t' + labelnums + '\n')
+        f_train.write(sentence + SegmentChar + wordnums + SegmentChar + labels + SegmentChar + labelnums + '\n')
     for item in eval_items:
         sentence = ''.join(item[0])
         wordnums = ' '.join(item[1])
         labels = ' '.join(item[2])
         labelnums = ' '.join(item[3])
-        f_eval.write(sentence + '\t' + wordnums + '\t' + labels + '\t' + labelnums + '\n')
+        f_eval.write(sentence + SegmentChar + wordnums + SegmentChar + labels + SegmentChar + labelnums + '\n')
 
 
 if __name__ == '__main__':
