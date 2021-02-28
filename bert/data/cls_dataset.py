@@ -1,5 +1,5 @@
 from torch.utils.data import Dataset
-from tasks.classify.classify_config import *
+from tasks.cls.classify_config import *
 
 
 class BertClsDataSet(Dataset):

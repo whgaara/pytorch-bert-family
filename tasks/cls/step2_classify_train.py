@@ -13,7 +13,7 @@ from tqdm import tqdm
 from torch.optim import Adam
 from sklearn.metrics import f1_score
 from bert.data.cls_dataset import BertClsDataSet, BertClsEvalSet
-from tasks.classify.classify_config import *
+from tasks.cls.classify_config import *
 from bert.models.tasks.BertClassify import BertClassify
 
 
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
         print('EP_%d mask loss:%s' % (epoch, print_loss))
         cls_f1 = get_f1(gt_list, pre_list)
-        print(epoch, 'train-classify f1 is:%s' % cls_f1)
+        print(epoch, 'train-cls f1 is:%s' % cls_f1)
 
         # eval
         with torch.no_grad():
@@ -114,7 +114,7 @@ if __name__ == '__main__':
             print('验证集正确率：%s' % acc_rate)
 
             eval_f1 = get_f1(label_list, pred_list)
-            print(epoch, 'eval-classify f1 is:%s' % eval_f1)
+            print(epoch, 'eval-cls f1 is:%s' % eval_f1)
 
             # save
             if eval_f1 > best_eval_f1:

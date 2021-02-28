@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-from tasks.classify.classify_config import HiddenSize, SentenceLength, VocabSize
+from tasks.cls.classify_config import HiddenSize, SentenceLength, VocabSize
 
 
 class BertEmbeddings(nn.Module):
