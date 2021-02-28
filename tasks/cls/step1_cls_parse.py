@@ -4,7 +4,7 @@
 # import sys
 # sys.path.append('根目录')
 
-from classify_config import *
+from cls_config import *
 from bert.common.tokenizers import Tokenizer
 
 

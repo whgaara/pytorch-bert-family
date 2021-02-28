@@ -8,7 +8,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 # sys.path.append('根目录')
 
 from tqdm import tqdm
-from tasks.cls.classify_config import *
+from tasks.cls.cls_config import *
 from bert.common.tokenizers import Tokenizer
 
 
