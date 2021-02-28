@@ -71,7 +71,7 @@ class BertNerBiRnnCrf(nn.Module):
     def forward(self, input_token, position_ids, segment_ids, attention_mask):
         # bert_output是最后一层经过全连接和激活函数后的结果
         # transformer_outputs是所有transformer层的结果
-        bert_output, transformer_outputs = self.bert(input_token, position_ids, segment_ids, attention_mask)
+        bert_output, transformer_outputs = self.bert(device, input_token, position_ids, segment_ids, attention_mask)
 
         # 将每个字768维度的特征数转换为实体类别特征数
         output = self.classify(transformer_outputs[-1])

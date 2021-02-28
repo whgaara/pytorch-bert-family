@@ -65,6 +65,6 @@ class BertClassify(nn.Module):
         self.load_state_dict(finetune_model_dict)
 
     def forward(self, input_token, position_ids, segment_ids, attention_mask):
-        bert_output, _ = self.bert(input_token, position_ids, segment_ids, attention_mask)
+        bert_output, _ = self.bert(device, input_token, position_ids, segment_ids, attention_mask)
         output = self.classify(bert_output)
         return output

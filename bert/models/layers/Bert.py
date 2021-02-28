@@ -14,7 +14,6 @@ class Bert(nn.Module):
                  intermediate_size
                  ):
         super(Bert, self).__init__()
-        self.device = device
         self.vocab_size = vocab_size
         self.hidden_size = hidden_size
         self.num_hidden_layers = num_hidden_layers
@@ -30,7 +29,7 @@ class Bert(nn.Module):
                 hidden_size=self.hidden_size,
                 attention_head_num=self.attention_head_num,
                 attention_head_size=self.attention_head_size,
-                intermediate_size=self.intermediate_size).to(self.device)
+                intermediate_size=self.intermediate_size).to(device)
             for _ in range(self.num_hidden_layers)
         )
         self.pooler = nn.Linear(self.hidden_size, self.hidden_size)
@@ -40,11 +39,11 @@ class Bert(nn.Module):
     def gen_attention_masks(segment_ids):
         return segment_ids[:, None, None, :]
 
-    def forward(self, input_token, position_ids, segment_ids, AttentionMask):
+    def forward(self, device, input_token, position_ids, segment_ids, AttentionMask):
         # embedding
         embedding_x = self.bert_emb(input_token, position_ids)
         if AttentionMask:
-            attention_mask = self.gen_attention_masks(segment_ids).to(self.device)
+            attention_mask = self.gen_attention_masks(segment_ids).to(device)
         else:
             attention_mask = None
         transformer_outputs = []
