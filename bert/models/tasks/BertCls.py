@@ -1,8 +1,8 @@
 import torch.nn as nn
 
 from tasks.cls.cls_config import *
-from bert.models.layers.Bert import Bert
-from bert.models.layers.Classify import Classify
+from bert.models.shared_layers.Bert import Bert
+from bert.models.shared_layers.Classify import Classify
 
 
 class BertClassify(nn.Module):

@@ -1,6 +1,6 @@
 from torch import nn
-from bert.models.layers.BertEmbeddings import BertEmbeddings
-from bert.models.layers.Transformer import Transformer
+from bert.models.shared_layers.BertEmbeddings import BertEmbeddings
+from bert.models.shared_layers.Transformer import Transformer
 
 
 class Bert(nn.Module):

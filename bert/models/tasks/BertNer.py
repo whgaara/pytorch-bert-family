@@ -2,9 +2,9 @@ import torch.nn as nn
 
 from torchcrf import CRF
 from tasks.ner.ner_config import *
-from bert.models.layers.Bert import Bert
-from bert.models.layers.BiGRU import BiGRU
-from bert.models.layers.Classify import Classify
+from bert.models.shared_layers.Bert import Bert
+from bert.models.shared_layers.BiGRU import BiGRU
+from bert.models.shared_layers.Classify import Classify
 
 
 class BertNerBiRnnCrf(nn.Module):

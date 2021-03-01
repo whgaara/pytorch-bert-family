@@ -14,7 +14,7 @@ from torch.optim import Adam
 from sklearn.metrics import f1_score
 from bert.data.cls_dataset import BertClsDataSet, BertClsEvalSet
 from tasks.cls.cls_config import *
-from bert.models.tasks.BertClassify import BertClassify
+from bert.models.tasks.BertCls import BertClassify
 
 
 def get_f1(l_t, l_p):
