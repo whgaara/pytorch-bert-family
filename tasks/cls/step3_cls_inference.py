@@ -38,7 +38,7 @@ class Inference(object):
             output_prob = round(torch.topk(output, 1).values.squeeze(0).tolist()[0], 4)
             output_num = torch.topk(output, 1).indices.squeeze(0).tolist()[0]
             current_label = self.num2classes[output_num]
-            print('输入内容：%s，疾病类型：%s，置信度：%s。\n' % (input_data, label, prob))
+            print('输入内容：%s，疾病类型：%s，置信度：%s。\n' % (input_data, current_label, output_prob))
             return current_label, output_prob
         else:
             print('您的输入有异常！')
