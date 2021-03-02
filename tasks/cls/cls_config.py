@@ -34,6 +34,7 @@ SourcePath = os.path.join(root, 'data/cls/source_data.txt')
 TrainPath = os.path.join(root, 'data/cls/train_data.txt')
 EvalPath = os.path.join(root, 'data/cls/eval_data.txt')
 C2NPicklePath = os.path.join(root, 'data/cls/classes2num.pickle')
+ClassCountPath = os.path.join(root, 'data/cls/classes_count.pickle')
 FinetunePath = os.path.join(root, 'checkpoint/finetune/cls/bert_cls_%s_%s.model' % (SentenceLength, HiddenLayerNum))
 PretrainPath = os.path.join(root, 'checkpoint/pretrain/pytorch_model.bin')
 

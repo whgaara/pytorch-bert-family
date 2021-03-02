@@ -34,6 +34,17 @@ if __name__ == '__main__':
     for k, v in class_to_num.items():
         num_to_class[v] = k
 
+    # 加载类别统计表
+    with open(ClassCountPath, 'rb') as f:
+        classes_count = pickle.load(f)
+    total_count = 0.0
+    classes_scale = {}
+    for cls in classes_count:
+        total_count += classes_count[cls]
+    for cls in classes_count:
+        classes_scale[cls] = round(float(total_count / classes_count[cls]), 2)
+    loss_weight = torch.tensor(list(classes_scale.values()))
+
     number_of_categories = len(class_to_num)
     bert_classify = BertClassify(number_of_categories).to(device)
 
@@ -48,7 +59,7 @@ if __name__ == '__main__':
     bert_classify = bert_classify.to(device)
 
     optim = Adam(bert_classify.parameters(), lr=LearningRate)
-    criterion = nn.CrossEntropyLoss().to(device)
+    criterion = nn.CrossEntropyLoss(weight=loss_weight).to(device)
 
     for epoch in range(Epochs):
         pre_list = []
