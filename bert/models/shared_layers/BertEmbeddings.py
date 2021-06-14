@@ -8,7 +8,7 @@ class BertEmbeddings(nn.Module):
         super(BertEmbeddings, self).__init__()
         self.token_embeddings = nn.Embedding(vocab_size, hidden_size)
         self.position_embeddings = nn.Embedding(max_len, hidden_size)
-        self.emb_normalization = nn.LayerNorm(hidden_size)
+        self.emb_normalization = nn.LayerNorm(hidden_size, eps=1e-12)
         self.emb_dropout = nn.Dropout(p=dropout_prob)
 
     def forward(self, input_token, position_ids):

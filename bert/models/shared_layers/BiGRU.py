@@ -17,7 +17,7 @@ class BiGRU(nn.Module):
             bidirectional=True
         )
         self.bi_gru_dense = nn.Linear(self.hidden_size * 2, self.hidden_size)
-        self.bi_gru_normalization = nn.LayerNorm(self.hidden_size)
+        self.bi_gru_normalization = nn.LayerNorm(self.hidden_size, eps=1e-12)
         self.bi_gru_dropout = nn.Dropout(p=self.dropout)
 
     def forward(self, input):
